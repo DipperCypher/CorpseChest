@@ -48,6 +48,8 @@ public class CorpseListener implements Listener {
         deathChest.put(key, death);
         event.getDrops().clear();
 
+        player.sendMessage(ChatColor.AQUA + "You died at: " + key + " Your items are safe until retrieve.");
+
         plugin.getLogger().info("CHEST CREATED AT: " + key);
         plugin.getLogger().info("Player: " + player.getName());
         plugin.getLogger().info("UUID: " + player.getUniqueId());
