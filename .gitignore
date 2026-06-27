@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+
+# IDEs
+.idea/
+.vscode/
+
+# Runtime / test server
+run/
+
+# Compiled files
+bin/
+out/
+
+# GitHub
+.github/
