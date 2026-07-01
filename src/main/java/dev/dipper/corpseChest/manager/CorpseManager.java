@@ -17,7 +17,7 @@ import java.util.*;
 public class CorpseManager {
     private final Map<UUID, BlockData> deathchest = new HashMap<>();
     private final Map<BlockKey, UUID> chestlookup = new HashMap<>();
-    private final Material chestBlock = Material.BEACON;
+    private final Material chestBlock = Material.ANDESITE_WALL;
     private File file;
     private FileConfiguration config;
     private CorpseChest plugin;

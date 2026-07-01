@@ -32,6 +32,8 @@ public class CorpseListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getPlayer();
+        if (player.getInventory().isEmpty()) return;
+
         BlockInventory full = corpseS.fullSave(player);
         Location loc = player.getLocation().getBlock().getLocation();
         BlockKey key = corpseS.key(loc);
@@ -49,6 +51,11 @@ public class CorpseListener implements Listener {
         event.getDrops().clear();
 
         loc.getBlock().setType(corpseS.getChestBlock());
+        loc.add(0, 1, 0);
+
+        if (loc.getBlock().getType() != Material.AIR) return;
+        loc.getBlock().setType(corpseS.getChestBlock());
+
         player.sendMessage(ChatColor.AQUA + "You died! Your items were stored in a corpse at your death location: "
                 + ChatColor.WHITE + "X: " + loc.getBlockX() + " Y: " + loc.getBlockY() + " Z: " + loc.getBlockZ());
     }
@@ -66,11 +73,8 @@ public class CorpseListener implements Listener {
         BlockData data = corpseS.get(key);
 
         if (data == null) return;
-
-        if (!data.getOwner().equals(player.getUniqueId())) {
-            player.sendMessage(ChatColor.RED + "Not your corpse.");
-            return;
-        }
+        if (player.getGameMode() != GameMode.SURVIVAL) return;
+        if (!data.getOwner().equals(player.getUniqueId())) return;
 
         event.setCancelled(true);
         Inventory inv = Bukkit.createInventory(
@@ -89,6 +93,7 @@ public class CorpseListener implements Listener {
         inv.setContents(gui);
         player.openInventory(inv);
         activeCorpseView.add(player.getUniqueId());
+        player.playSound(player, Sound.ENTITY_SKELETON_DEATH, 1, 1);
     }
 
     @EventHandler
@@ -118,7 +123,18 @@ public class CorpseListener implements Listener {
         World world = Bukkit.getWorld(key.world());
         if (world == null) return;
 
-        world.getBlockAt(key.x(), key.y(), key.z()).setType(Material.AIR);
+        Location location = new Location(
+                world,
+                key.x(),
+                key.y(),
+                key.z()
+        );
+
+       location.getBlock().setType(Material.AIR);
+       location.add(0, 1, 0);
+
+       if (location.getBlock().getType() != corpseS.getChestBlock()) return;
+       location.getBlock().setType(Material.AIR);
         corpseS.remove(data, key);
     }
 
