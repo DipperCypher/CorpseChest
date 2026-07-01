@@ -50,14 +50,14 @@ public class CorpseListener implements Listener {
         corpseS.add(data, key);
         event.getDrops().clear();
 
+        player.sendMessage(ChatColor.AQUA + "You died! Your items were stored in a corpse at your death location: "
+                + ChatColor.WHITE + "X: " + loc.getBlockX() + " Y: " + loc.getBlockY() + " Z: " + loc.getBlockZ());
+
         loc.getBlock().setType(corpseS.getChestBlock());
         loc.add(0, 1, 0);
 
         if (loc.getBlock().getType() != Material.AIR) return;
         loc.getBlock().setType(corpseS.getChestBlock());
-
-        player.sendMessage(ChatColor.AQUA + "You died! Your items were stored in a corpse at your death location: "
-                + ChatColor.WHITE + "X: " + loc.getBlockX() + " Y: " + loc.getBlockY() + " Z: " + loc.getBlockZ());
     }
 
     @EventHandler
