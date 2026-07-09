@@ -74,35 +74,30 @@ public class ChestMenu extends PaginatedMenu<ItemStack> {
 
     @Override
     public void onClose(Player player) {
-        for (ItemStack item : inventory.getContents()) {
-            if (item == null || item.getType() == Material.AIR) continue;;
+        BlockKey key = data.getKey();
+        World world = Bukkit.getWorld(key.world());
 
-            BlockKey key = data.getKey();
-            World world = Bukkit.getWorld(key.world());
+        if (world == null) return;
+        Location location = new Location(
+                world,
+                key.x(),
+                key.y(),
+                key.z()
+        );
 
-            if (world == null) return;
-            if (!isEmpty()) return;
-
-            Location location = new Location(
-                    world,
-                    key.x(),
-                    key.y(),
-                    key.z()
-            );
-
-            location.getBlock().setType(Material.AIR);
-            location.add(0,1,0);
-
-            if (location.getBlock().getType() == corpseM.getChestBlock()) location.getBlock().setType(Material.AIR);
-            corpseM.remove(data, key);
-        }
-    }
-
-    private boolean isEmpty() {
         for (ItemStack item : data.getInventory().getContents()) {
-            if (item != null && item.getType() != Material.AIR) return false;
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            player.getWorld().dropItemNaturally(
+                    location,
+                    item
+            );
         }
 
-        return true;
+        location.getBlock().setType(Material.AIR);
+        Location above = location.clone().add(0, 1, 0);
+
+        if (above.getBlock().getType() == corpseM.getChestBlock()) above.getBlock().setType(Material.AIR);
+        corpseM.remove(data, key);
     }
 }
