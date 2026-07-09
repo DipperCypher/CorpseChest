@@ -95,7 +95,7 @@ public class CorpseManager {
         config = YamlConfiguration.loadConfiguration(file);
     }
 
-    private void saveConfig() {
+    public void saveConfig() {
         try {
             for (Map.Entry<UUID, BlockData> entry : deathchest.entrySet()) {
                 String path = "corpses." + entry.getKey();
@@ -137,10 +137,6 @@ public class CorpseManager {
         return uuid == null ? null : deathchest.get(uuid);
     }
 
-    public BlockData getFromUUID(UUID uuid) {
-        return deathchest.get(uuid);
-    }
-
     public BlockInventory fullSave(Player player) {
         return new BlockInventory(
                 player.getInventory().getContents(),
@@ -164,9 +160,5 @@ public class CorpseManager {
 
     public Map<BlockKey, UUID> getChestlookup() {
         return chestlookup;
-    }
-
-    public Map<UUID, BlockData> getDeathchest() {
-        return deathchest;
     }
 }

@@ -1,9 +1,12 @@
 package dev.dipper.corpseChest.listener;
 
+import dev.dipper.corpseChest.CorpseChest;
 import dev.dipper.corpseChest.block.BlockInventory;
 import dev.dipper.corpseChest.block.BlockData;
 import dev.dipper.corpseChest.block.BlockKey;
 import dev.dipper.corpseChest.manager.CorpseManager;
+import dev.dipper.corpseChest.menu.ChestMenu;
+import dev.nexisMenu.gui.GuiManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,21 +15,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 public class CorpseListener implements Listener {
-    private CorpseManager corpseS;
-    private final Set<UUID> activeCorpseView = new HashSet<>();
+    private final CorpseChest plugin;
+    private final CorpseManager corpseS;
+    private final GuiManager guiM;
 
-    public CorpseListener(CorpseManager corpseS) {
+    public CorpseListener(CorpseChest plugin, CorpseManager corpseS, GuiManager guiM) {
+        this.plugin = plugin;
         this.corpseS = corpseS;
+        this.guiM = guiM;
     }
 
     @EventHandler
@@ -77,65 +78,9 @@ public class CorpseListener implements Listener {
         if (!data.getOwner().equals(player.getUniqueId())) return;
 
         event.setCancelled(true);
-        Inventory inv = Bukkit.createInventory(
-                null,
-                54,
-                "Corpse: " + data.getUuid()
-        );
-
-        ItemStack[] items = data.getInventory().getContents();
-        ItemStack[] gui = new ItemStack[54];
-
-        for (int i = 0; i < items.length && i < 54; i++) {
-            gui[i] = items[i];
-        }
-
-        inv.setContents(gui);
-        player.openInventory(inv);
-        activeCorpseView.add(player.getUniqueId());
+        ChestMenu menu = new ChestMenu(plugin, corpseS, data);
+        guiM.openMenuandLoad(player, menu);
         player.playSound(player, Sound.ENTITY_SKELETON_DEATH, 1, 1);
-    }
-
-    @EventHandler
-    public void onCloseInventory(InventoryCloseEvent event) {
-        Player player = (Player) event.getPlayer();
-
-        if (!activeCorpseView.contains(player.getUniqueId())) return;
-        activeCorpseView.remove(player.getUniqueId());
-
-        String title = event.getView().getTitle();
-        UUID titleUUID = getTitle(title);
-        if (titleUUID == null) return;
-
-        BlockData data =  corpseS.getFromUUID(titleUUID);
-        if (data == null) return;
-
-        Location dropLoc = player.getLocation();
-
-        for (ItemStack item : event.getInventory().getContents()) {
-            if (item == null || item.getType() == Material.AIR) continue;
-            dropLoc.getWorld().dropItemNaturally(dropLoc, item);
-        }
-
-        event.getInventory().clear();
-        BlockKey key = data.getKey();
-
-        World world = Bukkit.getWorld(key.world());
-        if (world == null) return;
-
-        Location location = new Location(
-                world,
-                key.x(),
-                key.y(),
-                key.z()
-        );
-
-       location.getBlock().setType(Material.AIR);
-       location.add(0, 1, 0);
-
-       if (location.getBlock().getType() != corpseS.getChestBlock()) return;
-       location.getBlock().setType(Material.AIR);
-        corpseS.remove(data, key);
     }
 
     @EventHandler
@@ -150,17 +95,5 @@ public class CorpseListener implements Listener {
         UUID uuid = corpseS.getChestlookup().get(key);
         if (uuid == null) return;
         event.setCancelled(true);
-    }
-
-    private UUID getTitle(String title) {
-        if (title == null) return null;
-
-        if (!title.startsWith("Corpse: ")) return null;
-
-        try {
-            return UUID.fromString(title.replace("Corpse: ", ""));
-        } catch (Exception e) {
-            return null;
-        }
     }
 }

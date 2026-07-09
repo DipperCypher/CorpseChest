@@ -17,6 +17,10 @@ public class BlockInventory {
         return contents;
     }
 
+    public void setContents(ItemStack[] item) {
+        this.contents = item;
+    }
+
     public ItemStack[] getArmor() {
         return armor;
     }

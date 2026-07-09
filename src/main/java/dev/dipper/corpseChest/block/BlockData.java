@@ -1,7 +1,5 @@
 package dev.dipper.corpseChest.block;
 
-import org.bukkit.Location;
-
 import java.util.UUID;
 
 public class BlockData {
