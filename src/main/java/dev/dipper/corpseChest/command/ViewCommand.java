@@ -1,0 +1,39 @@
+package dev.dipper.corpseChest.command;
+
+import dev.dipper.corpseChest.CorpseChest;
+import dev.dipper.corpseChest.manager.CorpseManager;
+import dev.dipper.corpseChest.menu.ViewMenu;
+import dev.nexisMenu.gui.GuiManager;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class ViewCommand implements CommandExecutor {
+    private final CorpseManager corpseM;
+    private final GuiManager guiM;
+    private final CorpseChest plugin;
+
+    public ViewCommand(CorpseManager corpseM, GuiManager guiM, CorpseChest plugin) {
+        this.corpseM = corpseM;
+        this.guiM = guiM;
+        this.plugin = plugin;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command Command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("Only player can run this command.");
+            return true;
+        }
+
+        if (!player.hasPermission("corpsechest.veiwcmd")) {
+            player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+            return true;
+        }
+
+        guiM.openMenuandLoad(player, new ViewMenu(plugin, corpseM, guiM));
+        return true;
+    }
+}

@@ -4,14 +4,14 @@ import java.util.UUID;
 
 public class BlockData {
     private UUID uuid;
-    private UUID owner;
+    private String name;
     private BlockKey key;
     private long creatTime;
     private BlockInventory inventory;
 
-    public BlockData(UUID uuid, UUID owner, BlockKey key, long creatTime, BlockInventory inventory) {
+    public BlockData(UUID uuid, String name, BlockKey key, long creatTime, BlockInventory inventory) {
         this.uuid = uuid;
-        this.owner = owner;
+        this.name = name;
         this.key = key;
         this.creatTime = creatTime;
         this.inventory = inventory;
@@ -21,8 +21,8 @@ public class BlockData {
         return uuid;
     }
 
-    public UUID getOwner() {
-        return owner;
+    public String getName() {
+        return name;
     }
 
     public BlockKey getKey() {

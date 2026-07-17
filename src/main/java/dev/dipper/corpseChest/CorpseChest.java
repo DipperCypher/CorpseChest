@@ -1,5 +1,6 @@
 package dev.dipper.corpseChest;
 
+import dev.dipper.corpseChest.command.ViewCommand;
 import dev.dipper.corpseChest.listener.CorpseListener;
 import dev.dipper.corpseChest.manager.CorpseManager;
 import dev.nexisMenu.gui.GuiListener;
@@ -17,6 +18,8 @@ public final class CorpseChest extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new CorpseListener(this, corpseManager, guiManager), this);
         getServer().getPluginManager().registerEvents(new GuiListener(guiManager), this);
+
+        getCommand("view").setExecutor(new ViewCommand(corpseManager, guiManager, this));
     }
 
     @Override

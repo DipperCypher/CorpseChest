@@ -1,0 +1,51 @@
+package dev.dipper.corpseChest.menu;
+
+import dev.dipper.corpseChest.block.BlockData;
+import dev.dipper.corpseChest.manager.CorpseManager;
+import dev.nexisMenu.gui.GuiManager;
+import dev.nexisMenu.menu.PaginatedMenu;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class ViewMenu extends PaginatedMenu<BlockData> {
+    private final CorpseManager corpseM;
+    private final GuiManager guiM;
+
+    public ViewMenu(JavaPlugin plugin, CorpseManager corpseM, GuiManager guiM) {
+        super(plugin);
+        this.corpseM = corpseM;
+        this.guiM = guiM;
+    }
+
+    @Override
+    public String getMenuName() {
+        return "All Corpse";
+    }
+
+    @Override
+    public int getSlots() {
+        return 54;
+    }
+
+    @Override
+    protected CompletableFuture<List<BlockData>> loadDataAsync(Player player) {
+        return CompletableFuture.supplyAsync(() -> new ArrayList<>(corpseM.getDeathchest().values()));
+    }
+
+    @Override
+    protected ItemStack toItem(BlockData item) {
+        return makeItem(Material.LODESTONE, "Player: " + item.getName(), ChatColor.GRAY + item.getKey().toString());
+    }
+
+    @Override
+    protected void onElementClick(Player player, BlockData item, InventoryClickEvent event) {
+         guiM.openMenuandLoad(player, new ChestMenu(plugin, corpseM, item, false));
+    }
+}

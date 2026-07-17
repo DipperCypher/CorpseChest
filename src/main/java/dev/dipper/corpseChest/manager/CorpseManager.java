@@ -41,8 +41,8 @@ public class CorpseManager {
         for (String uuidString : config.getConfigurationSection("corpses").getKeys(false)) {
             try {
                 UUID uuid = UUID.fromString(uuidString);
-                String path = "corpses." + uuidString;
-                UUID ownerUUID = UUID.fromString(config.getString(path + ".owner"));
+                String path = "corpses." + uuidString;;
+                String name = config.getString(path + ".name");
 
                 String world = config.getString(path + ".world");
                 int x = config.getInt(path + ".x");
@@ -61,7 +61,7 @@ public class CorpseManager {
                 BlockKey key = new BlockKey(world, x, y, z);
                 BlockData data = new BlockData(
                         uuid,
-                        ownerUUID,
+                        name,
                         key,
                         time,
                         inventory
@@ -85,7 +85,7 @@ public class CorpseManager {
         if (!file.exists()) {
             try {
                 file.createNewFile();
-                plugin.getLogger().info("Successfull created: " + file);
+                plugin.getLogger().info("Successfully created: " + file);
             } catch (Exception e) {
                 plugin.getLogger().severe("Failed to create: " + file);
                 e.printStackTrace();
@@ -97,11 +97,13 @@ public class CorpseManager {
 
     public void saveConfig() {
         try {
+            config.set("corpses", null);
+
             for (Map.Entry<UUID, BlockData> entry : deathchest.entrySet()) {
                 String path = "corpses." + entry.getKey();
                 BlockData data = entry.getValue();
 
-                config.set(path + ".owner", data.getOwner().toString());
+                config.set(path + ".name", data.getName());
                 config.set(path + ".world", data.getKey().world());
                 config.set(path + ".x", data.getKey().x());
                 config.set(path + ".y", data.getKey().y());
@@ -128,7 +130,6 @@ public class CorpseManager {
         UUID uuid = data.getUuid();
         deathchest.remove(uuid);
         chestlookup.remove(key);
-        config.set("corpses." + uuid.toString(), null);
         saveConfig();
     }
 
@@ -156,6 +157,10 @@ public class CorpseManager {
 
     public Material getChestBlock() {
         return chestBlock;
+    }
+
+    public Map<UUID, BlockData> getDeathchest() {
+        return deathchest;
     }
 
     public Map<BlockKey, UUID> getChestlookup() {

@@ -14,23 +14,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ChestMenu extends PaginatedMenu<ItemStack> {
     private final CorpseManager corpseM;
     private final BlockData data;
+    private final boolean adminOpen;
 
-    public ChestMenu(JavaPlugin plugin, CorpseManager corpseM, BlockData data) {
+    public ChestMenu(JavaPlugin plugin, CorpseManager corpseM, BlockData data, boolean openCorpse) {
         super(plugin);
         this.corpseM = corpseM;
         this.data = data;
+        this.adminOpen = openCorpse;
     }
 
     @Override
     public String getMenuName() {
-        return "Corpse: " + data.getUuid();
+        return "Corpse: " + data.getName();
     }
 
     @Override
@@ -59,9 +60,7 @@ public class ChestMenu extends PaginatedMenu<ItemStack> {
 
     @Override
     protected void onElementClick(Player player, ItemStack item, InventoryClickEvent event) {
-        if (item == null) return;
-
-        player.getInventory().addItem(item.clone());
+        /*player.getInventory().addItem(item.clone());
         List<ItemStack> contents = new ArrayList<>(
                 Arrays.asList(data.getInventory().getContents())
         );
@@ -69,11 +68,13 @@ public class ChestMenu extends PaginatedMenu<ItemStack> {
         contents.remove(item);
         data.getInventory().setContents(contents.toArray(new ItemStack[0]));
         corpseM.saveConfig();
-        requestReload();
+        requestReload();*/
     }
 
     @Override
     public void onClose(Player player) {
+        if (!adminOpen) return;
+
         BlockKey key = data.getKey();
         World world = Bukkit.getWorld(key.world());
 

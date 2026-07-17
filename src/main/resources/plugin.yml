@@ -2,3 +2,5 @@ name: CorpseChest
 version: '${version}'
 main: dev.dipper.corpseChest.CorpseChest
 api-version: '26.1.1'
+commands:
+  view: { }

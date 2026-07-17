@@ -42,7 +42,7 @@ public class CorpseListener implements Listener {
         UUID uuid = UUID.randomUUID();
         BlockData data = new BlockData(
                 uuid,
-                player.getUniqueId(),
+                player.getName(),
                 key,
                 System.currentTimeMillis(),
                 full
@@ -75,10 +75,10 @@ public class CorpseListener implements Listener {
 
         if (data == null) return;
         if (player.getGameMode() != GameMode.SURVIVAL) return;
-        if (!data.getOwner().equals(player.getUniqueId())) return;
+        if (!data.getName().equals(player.getName())) return;
 
         event.setCancelled(true);
-        ChestMenu menu = new ChestMenu(plugin, corpseS, data);
+        ChestMenu menu = new ChestMenu(plugin, corpseS, data, true);
         guiM.openMenuandLoad(player, menu);
         player.playSound(player, Sound.ENTITY_SKELETON_DEATH, 1, 1);
     }
