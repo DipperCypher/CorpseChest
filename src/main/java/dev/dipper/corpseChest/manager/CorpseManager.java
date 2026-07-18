@@ -79,7 +79,7 @@ public class CorpseManager {
     }
 
     public void loadConfig() {
-        file = new File(plugin.getDataFolder(), "corpse_data.yml");
+        file = new File(plugin.getDataFolder(), "corpse_chest.yml");
         if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
 
         if (!file.exists()) {

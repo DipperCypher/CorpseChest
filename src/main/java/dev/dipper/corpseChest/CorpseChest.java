@@ -1,5 +1,6 @@
 package dev.dipper.corpseChest;
 
+import dev.dipper.corpseChest.command.InvViewCommand;
 import dev.dipper.corpseChest.command.ViewCommand;
 import dev.dipper.corpseChest.listener.CorpseListener;
 import dev.dipper.corpseChest.manager.CorpseManager;
@@ -20,6 +21,7 @@ public final class CorpseChest extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GuiListener(guiManager), this);
 
         getCommand("view").setExecutor(new ViewCommand(corpseManager, guiManager, this));
+        getCommand("invview").setExecutor(new InvViewCommand(guiManager, this));
     }
 
     @Override
