@@ -10,6 +10,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -41,11 +44,22 @@ public class ViewMenu extends PaginatedMenu<BlockData> {
 
     @Override
     protected ItemStack toItem(BlockData item) {
-        return makeItem(Material.LODESTONE, "Player: " + item.getName(), ChatColor.GRAY + item.getKey().toString());
+        return makeItem(Material.LODESTONE,
+                ChatColor.AQUA + "Player: " + item.getName(),
+                ChatColor.YELLOW + "Created: " + formatTime(item.getCreatTime()),
+                ChatColor.GRAY + item.getKey().toString());
     }
 
     @Override
     protected void onElementClick(Player player, BlockData item, InventoryClickEvent event) {
          guiM.openMenuandLoad(player, new ChestMenu(plugin, corpseM, item, false));
+    }
+
+    private final DateTimeFormatter TIME_FORMAT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    .withZone(ZoneId.systemDefault());
+
+    private String formatTime(Long time) {
+        return TIME_FORMAT.format(Instant.ofEpochMilli(time));
     }
 }
